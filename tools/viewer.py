@@ -95,45 +95,85 @@ def load_candidates(path):
     return [(t, i) for t, i in out if i]
 
 
-def append_log(path, row):
-    new = not Path(path).is_file()
-    with open(path, "a", newline="", encoding="utf-8") as f:
+def read_log(path):
+    """Doc review_log.csv cu: {image: (type, verdict, note)} (dong cuoi cung cua moi anh thang)."""
+    out = {}
+    if Path(path).is_file():
+        with open(path, encoding="utf-8", newline="") as f:
+            for r in csv.DictReader(f):
+                out[r["image"]] = (r["type"], r["verdict"], r["note"])
+    return out
+
+
+def write_log(path, rows):
+    with open(path, "w", newline="", encoding="utf-8") as f:
         wr = csv.writer(f)
-        if new:
-            wr.writerow(["image", "type", "verdict", "note"])
-        wr.writerow(row)
+        wr.writerow(["image", "type", "verdict", "note"])
+        for img, (t, v, n) in rows.items():
+            wr.writerow([img, t, v, n])
 
 
 def gui(dv, items, log, reviewer):
     import tkinter as tk
-    from tkinter import messagebox
+    from tkinter import messagebox, ttk
     from PIL import ImageTk
-    st = {"i": 0, "zoom": 3}
+    st = {"i": 0, "zoom": 2}
+    saved = read_log(log)   # da chot (image -> type, verdict, note co tien to [nguoi])
+    drafts = {}             # dang go do: image -> (type, note); giu khi chuyen anh
+    prefix = f"[{reviewer}] "
     root = tk.Tk(); root.title("Review - trai: detection | phai: panoptic")
     lbl = tk.Label(root); lbl.pack()
     info = tk.Label(root, font=("Segoe UI", 11)); info.pack()
     ent = tk.Entry(root, width=100); ent.pack(pady=4)
+    tf = tk.Frame(root); tf.pack()
+    tk.Label(tf, text="Loai loi:").pack(side="left")
+    tent = ttk.Combobox(tf, width=22, state="readonly", values=["class_swap", "category_swap", "bbox_drift", "missing_box", "instance_merge"]); tent.pack(side="left", padx=4)
+
+    def keep_draft():
+        _, img = items[st["i"]]
+        drafts[img] = (tent.get().strip(), ent.get().strip())
 
     def show():
         t, img = items[st["i"]]
-        st["photo"] = ImageTk.PhotoImage(dv.render(img, st["zoom"]))
+        pic = dv.render(img, st["zoom"])
+        sw, sh = root.winfo_screenwidth() - 40, root.winfo_screenheight() - 260  # chua cho cho o nhap + nut
+        k = min(1.0, sw / pic.width, sh / pic.height)  # thu nho cho vua man hinh
+        if k < 1.0:
+            pic = pic.resize((int(pic.width * k), int(pic.height * k)), Image.LANCZOS)
+        st["photo"] = ImageTk.PhotoImage(pic)
         lbl.config(image=st["photo"])
-        info.config(text=f"[{st['i']+1}/{len(items)}] {img}  loai: {t}   (C=confirmed, R=rejected, ghi 'thay gi' vao o duoi, >=20 ky tu)")
+        if img in drafts:
+            dt, dn = drafts[img]
+        elif img in saved:
+            dt, dn = saved[img][0], saved[img][2].removeprefix(prefix)
+        else:
+            dt, dn = ("" if t == "class_or_category_swap" else t), ""
+        tent.set(dt); ent.delete(0, "end"); ent.insert(0, dn)
+        state = f"DA CHOT: {saved[img][1]}" if img in saved else "chua review"
+        info.config(text=f"[{st['i']+1}/{len(items)}] {img}  loai ung vien: {t}  |  {state}   (Ctrl+C=confirmed, Ctrl+R=rejected, ghi chu >=20 ky tu)")
 
     def verdict(v):
-        t, img = items[st["i"]]
+        _, img = items[st["i"]]
         note = ent.get().strip()
+        t = tent.get().strip()
+        if not t:
+            messagebox.showwarning("Loai loi", "Chon loai: class_swap hoac category_swap (xem anh: nguon nao sai).")
+            return
         if len(note) < 20:
             messagebox.showwarning("Ghi chu", "Ghi chu phai noi THAY GI trong anh (>= 20 ky tu).")
             return
-        append_log(log, [img, t, v, f"[{reviewer}] {note}"])
-        ent.delete(0, "end"); move(1)
+        saved[img] = (t, v, prefix + note)   # ghi de neu review lai, khong trung dong
+        drafts.pop(img, None)
+        write_log(log, saved)
+        move(1, keep=False)
 
-    def move(d):
+    def move(d, keep=True):
+        if keep:
+            keep_draft()
         st["i"] = max(0, min(len(items) - 1, st["i"] + d)); show()
 
     def zoom(d):
-        st["zoom"] = max(1, min(6, st["zoom"] + d)); show()
+        keep_draft(); st["zoom"] = max(1, min(6, st["zoom"] + d)); show()
 
     bar = tk.Frame(root); bar.pack()
     for text, fn in [("<", lambda: move(-1)), ("confirmed (Ctrl+C)", lambda: verdict("confirmed")),

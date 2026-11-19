@@ -1,0 +1,12 @@
+image,type,verdict,note
+img_0003,bbox_drift,confirmed,[D] Box bench đánh lên cả người phụ nữ và phần bậc thang
+img_0013,bbox_drift,confirmed,[D] Box gán không bao quát được vật thể
+img_0069,class_swap,confirmed,[D] Box ngoài cùng là cừu gán sai class
+img_0090,instance_merge,confirmed,[D] Các vật khác nhau nhưng lại tô cùng màu
+img_0096,class_swap,confirmed,[D] Dog như gán sai sang Cat
+img_0159,category_swap,confirmed,[D] Cậu bé trên ván trượt nhưng panoptic gán sai zebra
+img_0165,missing_box,confirmed,[D] con mèo không có box
+img_0177,missing_box,confirmed,[D] Thiếu box con ngựa đứng sau
+img_0183,missing_box,confirmed,[D] Con ngựa vằn đứng sau không được gán box
+img_0186,category_swap,confirmed,[D] gán sai class sang thành cup
+img_0207,missing_box,confirmed,[D] không có box người phụ nữ đứng giữa 3 người
