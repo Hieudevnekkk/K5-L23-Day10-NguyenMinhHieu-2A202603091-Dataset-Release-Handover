@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validator Day 10 — PHẦN A: khung chương trình, giao diện dòng lệnh, lỗi luật file + nhãn detection.
+"""Validator Day 10 — Pha 1: luật file, detection, metadata và panoptic.
 
     python validator/validate.py <thư_mục_delivery> --out <errors.json> [--candidates <candidates.json>]
 
@@ -8,8 +8,7 @@ annotation COCO, không dùng mạng).
 
 Phần A (file này) làm 5 loại lỗi:
     missing_image, wrong_hash, invalid_class, bbox_out_of_bounds, duplicate_box
-Phần B (scene_leak, guideline_mismatch, invalid_category_id, thing_overlap) gắn vào `PER_IMAGE_CHECKS`
-(kiểm từng ảnh) và `DATASET_CHECKS` (kiểm cả lô) ở cuối phần "ĐIỂM GẮN" bên dưới.
+Phần B kiểm scene_leak, guideline_mismatch, invalid_category_id, thing_overlap.
 Phần C (đối chiếu det <-> panoptic) gắn vào `find_candidates`.
 
 Quy ước: mỗi ảnh mang nhiều nhất MỘT lỗi luật; kiểm theo thứ tự trong `PER_IMAGE_CHECKS`, lỗi đầu tiên thắng
@@ -18,11 +17,15 @@ Quy ước: mỗi ảnh mang nhiều nhất MỘT lỗi luật; kiểm theo th�
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
 import sys
 from collections import Counter
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+import pngutil  # noqa: E402
 
 # ---- ngưỡng (đo trên lô sạch runs/clean và nhiều seed; ghi lý do vào REPORT.md) ---------------------
 OOB_TOL = 1e-4        # box tràn mép quá mức này (tỉ lệ ảnh) mới là lỗi. Nhãn YOLO làm tròn 6 chữ số nên sai số tự nhiên <= 1e-6.
@@ -49,7 +52,14 @@ def load_delivery(d: Path) -> dict:
             classes[int(k)] = name
     pan = json.loads((d / "panoptic.json").read_text(encoding="utf-8"))
     size = {Path(i["file_name"]).stem: (i["width"], i["height"]) for i in pan["images"]}
-    return {"dir": d, "manifest": man, "classes": classes, "size": size, "panoptic": pan}
+    metadata = json.loads((d / "metadata.json").read_text(encoding="utf-8"))["items"]
+    with (d / "jobs.csv").open(encoding="utf-8-sig", newline="") as handle:
+        jobs = {row["job_id"]: row for row in csv.DictReader(handle)}
+    image_names = {i["id"]: Path(i["file_name"]).stem for i in pan["images"]}
+    annotations = {image_names[a["image_id"]]: a for a in pan["annotations"]}
+    return {"dir": d, "manifest": man, "classes": classes, "size": size, "panoptic": pan,
+            "metadata": {row["image"]: row for row in metadata}, "jobs": jobs,
+            "annotations": annotations, "categories": {c["id"]: c for c in pan["categories"]}}
 
 
 def read_boxes(path: Path):
@@ -106,7 +116,43 @@ def check_duplicate_box(ctx, img, it) -> bool:
                for i, a in enumerate(b) for c in b[i + 1:])
 
 
-# ---- ĐIỂM GẮN cho phần B / C -----------------------------------------------------------------------
+# ---- phần B: metadata và panoptic -----------------------------------------------------------------
+def check_guideline_mismatch(ctx, img, it) -> bool:
+    """So guideline từng ảnh với job của ảnh; không coi mọi job v1.2 là sai."""
+    meta = ctx["metadata"][img]
+    return meta["guideline_version"] != ctx["jobs"][meta["job_id"]]["guideline"]
+
+
+def check_invalid_category_id(ctx, img, it) -> bool:
+    return any(s["category_id"] not in ctx["categories"]
+               for s in ctx["annotations"][img]["segments_info"])
+
+
+def check_thing_overlap(ctx, img, it) -> bool:
+    """Đếm pixel id RGB thật; chỉ báo thing có area khai lớn hơn diện tích còn lại.
+
+    Không dùng giao bbox: hai bbox giao nhau chưa chứng minh mask bị đè.
+    Crowd vẫn là thing; stuff và vùng void (id 0) không là đối tượng kiểm.
+    """
+    things = [s for s in ctx["annotations"][img]["segments_info"]
+              if ctx["categories"].get(s["category_id"], {}).get("isthing")]
+    if not things:
+        return False
+    _, _, pixels = pngutil.read_rgb(ctx["dir"] / it["mask"])
+    counts = Counter(r + (g << 8) + (b << 16)
+                     for r, g, b in zip(pixels[0::3], pixels[1::3], pixels[2::3]))
+    return any(s["area"] > counts[s["id"]] for s in things)
+
+
+def check_scene_leak(ctx):
+    splits = {}
+    for row in ctx["metadata"].values():
+        splits.setdefault(row["scene_id"], set()).add(row["split"])
+    return [{"type": "scene_leak", "target": scene}
+            for scene, values in sorted(splits.items()) if {"train", "val"} <= values]
+
+
+# ---- ĐIỂM GẮN cho phần C --------------------------------------------------------------------------
 # Thứ tự = độ ưu tiên khi một ảnh vi phạm nhiều luật (lỗi đầu tiên thắng).
 PER_IMAGE_CHECKS = [
     ("missing_image", check_missing_image),
@@ -114,10 +160,12 @@ PER_IMAGE_CHECKS = [
     ("invalid_class", check_invalid_class),
     ("bbox_out_of_bounds", check_bbox_out_of_bounds),
     ("duplicate_box", check_duplicate_box),
-    # B: ("guideline_mismatch", check_guideline_mismatch), ("invalid_category_id", ...), ("thing_overlap", ...)
+    ("guideline_mismatch", check_guideline_mismatch),
+    ("invalid_category_id", check_invalid_category_id),
+    ("thing_overlap", check_thing_overlap),
 ]
 # B: các check cả lô, mỗi hàm (ctx) -> list[{"type":..., "target":...}], ví dụ scene_leak (target là scene_id).
-DATASET_CHECKS = []
+DATASET_CHECKS = [check_scene_leak]
 
 
 def find_candidates(ctx, skip_images):
