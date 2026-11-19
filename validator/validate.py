@@ -169,8 +169,11 @@ DATASET_CHECKS = [check_scene_leak]
 
 
 def find_candidates(ctx, skip_images):
-    """C: ghép box detection <-> segment panoptic, trả list ứng viên lỗi gán nhãn. Phần A chưa làm."""
-    return []
+    """C: ghép box detection <-> segment panoptic (pixel mask), trả list ứng viên lỗi gán nhãn.
+
+    Logic nằm ở validator/crosscheck.py. Ảnh đã dính lỗi luật bị bỏ qua (mỗi ảnh nhiều nhất một lỗi)."""
+    import crosscheck  # cùng thư mục validator/, nằm sẵn trong sys.path khi chạy validate.py
+    return crosscheck.find_candidates(ctx["dir"], skip_images=skip_images)
 
 
 # ---- chạy ------------------------------------------------------------------------------------------
