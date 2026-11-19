@@ -10,7 +10,6 @@ img_0183,missing_box,confirmed,"[Thiện] 2 ngựa vằn đứng chồng nhau, c
 img_0207,missing_box,rejected,"[Thiện] segment là cô gái đội mũ trắng bị chuối và đầu bếp che, cô đã có box person; lệch do che khuất, không phải thiếu box"
 img_0090,instance_merge,confirmed,"[Thiện] một segment vase bao cả lọ thủy tinh sọc xanh và lọ tím bên phải, hai lọ riêng bị gộp làm một"
 img_0090,bbox_drift,rejected,"[Thiện] box lọ sọc xanh ôm đúng vật; IoU thấp chỉ vì segment bị gộp hai lọ (đã ghi instance_merge)"
-img_0149,bbox_drift,confirmed,"[Thiện] box person lệch sang trái và xuống dưới: dư khoảng tuyết bên trái, cắt mất tay phải, gậy và mũ người trượt tuyết"
 img_0003,bbox_drift,rejected,"[Thiện] ghế băng nhỏ trên khán đài bị người ngồi che gần hết, box lệch mask là tự nhiên"
 img_0041,bbox_drift,rejected,"[Thiện] nhóm người đứng sát và che nhau, box lệch mask nhẹ do che khuất, không phải box bị dời"
 img_0137,bbox_drift,rejected,"[Thiện] cà vạt rất nhỏ của người cưỡi voi ở xa, vài pixel lệch là bình thường"
