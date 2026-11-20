@@ -12,9 +12,9 @@ Mỗi người một phần chính và một phần hỗ trợ, để khối lư
 |---|---|---|---|---|---|
 | A | Nguyễn Hoàn Thiện | 2A202603123 | Pha 1: khung `validate.py`, giao diện dòng lệnh; `missing_image`, `wrong_hash`, `invalid_class`, `bbox_out_of_bounds`, `duplicate_box` | Đề ẩn: chốt `review_log.csv`, `errors.json`; Pha 5: `trace.json`; `prompts.md` | Phần đầu `validator/validate.py`; `submission/de_an/`; `trace.json` |
 | B | Dương Quang Chung | (bổ sung) | Pha 1: `scene_leak`, `guideline_mismatch`, `invalid_category_id`, `thing_overlap` (đếm pixel mask qua `pngutil.py`); kiểm thử trên ≥ 2 seed và lô sạch; ghép code với A | Pha 6: `security.md` (ca USB, năm việc được/không, ca khuôn mặt) | Phần sau `validator/validate.py`; `security.md` |
-| C | Dũng | (bổ sung) | Pha 2: ghép box với segment bằng pixel mask, sinh `candidates.json`; đo ứng viên trên lô sạch, chọn ngưỡng | Số liệu và câu hỏi Pha 2 trong `REPORT.md` (ứng viên lô sạch, vì sao báo hết làm F1 giảm) | `validator/crosscheck.py`; `candidates.json`; mục Pha 2 của `REPORT.md` |
+| C | Phạm Tiến Dũng | 2A202603061 | Pha 2: ghép box với segment bằng pixel mask, sinh `candidates.json`; đo ứng viên trên lô sạch, chọn ngưỡng | Số liệu và câu hỏi Pha 2 trong `REPORT.md` (ứng viên lô sạch, vì sao báo hết làm F1 giảm) | `validator/crosscheck.py`; `candidates.json`; mục Pha 2 của `REPORT.md` |
 | D | Nguyễn Minh Hiếu | 2A202603091 | Công cụ xem ảnh (vẽ box, viền segment); chia hàng đợi review; `merge_review.py` ra `errors.json` | Review seed luyện tập: `submission/r24007/review_log.csv` | `tools/viewer.py`; `review_log.csv`, `errors.json` của seed |
-| E | Vi Đức | (bổ sung) | Pha 3–4: quyết định HOLD, `lineage.py` (HOLD v1, release v2 có parent); dựng lô v2, `pack_release.py`, `check_handover.py` | `TEAM.md`, phần bàn giao và lineage trong `REPORT.md`; `export_submission.py` | `handover/`; `lineage.jsonl`; `README.txt` của v2 |
+| E | Vi Thanh Đức | 2A202603051 | Pha 3–4: quyết định HOLD, `lineage.py` (HOLD v1, release v2 có parent); dựng lô v2, `pack_release.py`, `check_handover.py` | `TEAM.md`, phần bàn giao và lineage trong `REPORT.md`; `export_submission.py` | `handover/`; `lineage.jsonl`; `README.txt` của v2 |
 
 ## Phối hợp
 
