@@ -7,3 +7,4 @@ image,type,verdict,note
 000000001818,missing_box,confirmed,"hai ngựa vằn: con lớn bên trái (thân và chân, chiếm 44% ảnh) có segment zebra nhưng không có box; box zebra duy nhất ôm con nhỏ bên phải"
 000000012748,missing_box,confirmed,"có người lớn đứng phía sau và em bé được bế, nhưng chỉ có một box person; segment người lớn không có box riêng"
 000000001353,missing_box,rejected,"mảnh segment person rất nhỏ (1,2% ảnh) lộ ra sau đầu bé bên phải trên tàu đồ chơi, nằm sát các box person đã có; che khuất tự nhiên, không phải thiếu box"
+000000060932,bbox_drift,rejected,"ứng viên của lô sạch (không có lỗi gài): cà vạt rộng 6 pixel của người đứng bên trái trong ảnh tiệc cưới đen trắng; box cao 27 pixel, mask nhìn thấy cao 17 pixel vì đoạn dưới cà vạt chìm vào áo vest tối, hai bên trùng nhau theo chiều ngang; vật rất nhỏ bị che nên IoU thấp 0,52, không phải box bị dời"

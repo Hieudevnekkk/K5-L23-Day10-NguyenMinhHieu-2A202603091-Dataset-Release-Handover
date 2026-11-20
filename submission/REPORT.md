@@ -2,7 +2,7 @@
 
 ## 1. Số liệu luyện tập
 - F1 theo seed (rule / cross_check / overall): **24007: 1.0 / 0.6 / 0.8** (`score_findings.py`, sau khi xem ảnh 8 ứng viên và chốt `errors.json`: 11 lỗi luật + 7 lỗi gán nhãn đã xác nhận). Chỉ đo một seed luyện tập, kết quả làm tròn.
-- Số ứng viên trên lô sạch (`--no-faults`, 50 ảnh): **1** (2%, một `bbox_drift` ở ảnh vật rất nhỏ); lỗi luật trên lô sạch: 0. Hàng đợi trên seed luyện tập: **8 ảnh** (7 `confirmed`, 1 `rejected`). Hàng đợi đề ẩn: 11 ảnh (9 `confirmed`, 2 `rejected`).
+- Số ứng viên trên lô sạch (`--no-faults`, 50 ảnh): **1** (2%); lỗi luật trên lô sạch: 0. Chi tiết ứng viên này xem `review_log.csv` (dòng `000000060932`, `rejected`). Hàng đợi trên seed luyện tập: **8 ảnh** (7 `confirmed`, 1 `rejected`). Hàng đợi đề ẩn: 11 ảnh (9 `confirmed`, 2 `rejected`).
 - Ngưỡng đã chọn và cách chọn (không dùng `_private`): ghép box với segment bằng IoU giữa box và bbox sát của segment đo từ mask, ngưỡng ghép 0,15; `bbox_drift` khi IoU < 0,6 hoặc dưới 88% pixel của segment nằm trong box; `instance_merge` khi pixel segment được chia ra các box cùng lớp (tổng từ 0,6 đến 1,25) và không box nào chứa trọn segment; `missing_box` khi segment thing chiếm từ 1% ảnh mà không box nào còn trống che nó. Cách chọn: đo nhiễu trên lô sạch (cần ít ứng viên, đạt 1/50 ảnh) và trên phân bố IoU của 1718 cặp box–segment cùng lớp trong đề ẩn (1134 cặp có IoU xấp xỉ 1,0, chỉ khoảng 5 cặp dưới 0,7). Không dùng `_private`.
 
 ## 2. Vì sao báo hết ứng viên làm F1 giảm?
