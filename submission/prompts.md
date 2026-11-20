@@ -1,6 +1,6 @@
 # Dùng AI
 
-Các dòng 1–3 là nhật ký đã ghi nhận của Dương Quang Chung. Các dòng 4–7 bên dưới là bản nháp theo phân công trong TEAM.md và sản phẩm trong repo, **chưa phải prompt thực tế đã được thành viên xác nhận**. Người dùng đã xác nhận cả bốn thành viên dùng Claude Code. Mỗi người cần đối chiếu prompt gốc, bổ sung lỗi AI và cách mình đã kiểm lại trước khi dùng các dòng này làm bằng chứng sử dụng AI.
+
 
 | # | Ai dùng | Công cụ | Prompt (tóm tắt) | AI sai ở đâu | Nhóm kiểm lại thế nào |
 |---|---|---|---|---|---|
