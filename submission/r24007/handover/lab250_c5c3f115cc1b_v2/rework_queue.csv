@@ -1,0 +1,11 @@
+image,type,annotator,reviewer,action
+000000000872,missing_box,A04,Q01,gán lại nhãn detection (missing_box); ảnh rời v2
+000000001761,invalid_class,A04,Q01,gán lại nhãn detection (invalid_class); ảnh rời v2
+000000001818,missing_box,A04,Q01,gán lại nhãn detection (missing_box); ảnh rời v2
+000000008762,invalid_class,A02,Q01,gán lại nhãn detection (invalid_class); ảnh rời v2
+000000011760,bbox_out_of_bounds,A04,Q01,gán lại nhãn detection (bbox_out_of_bounds); ảnh rời v2
+000000012748,missing_box,A04,Q01,gán lại nhãn detection (missing_box); ảnh rời v2
+000000013348,duplicate_box,A05,Q03,gán lại nhãn detection (duplicate_box); ảnh rời v2
+000000017959,bbox_out_of_bounds,A02,Q03,gán lại nhãn detection (bbox_out_of_bounds); ảnh rời v2
+000000022192,class_swap,A02,Q02,gán lại nhãn detection (class_swap); ảnh rời v2
+000000023034,class_swap,A02,Q02,gán lại nhãn detection (class_swap); ảnh rời v2
