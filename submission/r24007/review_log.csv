@@ -1,0 +1,9 @@
+image,type,verdict,note
+000000017379,category_swap,confirmed,"người đứng bên trái trong màn hình tivi ở gương nhà vệ sinh là cầu thủ áo xanh lá, detection ghi person đúng; panoptic ghi truck sai"
+000000022192,class_swap,confirmed,"con vật ngồi trước rèm là chó mõm vuông tai cụp, panoptic ghi dog đúng; detection ghi cat sai"
+000000023034,class_swap,confirmed,"cận cảnh một người đội mũ cam đeo ba lô xanh, panoptic ghi person đúng; detection ghi orange cho cả người này là sai"
+000000017178,instance_merge,confirmed,"một segment horse trải trên hai box horse tách rời: cặp ngựa nhỏ ở xa bên trái và con ngựa bên cạnh xe hơi, đây là các con riêng biệt bị gộp"
+000000000872,missing_box,confirmed,"hai cầu thủ bóng chày chồng nhau: box person duy nhất ôm cầu thủ áo xanh lá phía sau; cầu thủ áo vàng đội mũ bảo hiểm chạy phía trước có segment person nhưng không có box"
+000000001818,missing_box,confirmed,"hai ngựa vằn: con lớn bên trái (thân và chân, chiếm 44% ảnh) có segment zebra nhưng không có box; box zebra duy nhất ôm con nhỏ bên phải"
+000000012748,missing_box,confirmed,"có người lớn đứng phía sau và em bé được bế, nhưng chỉ có một box person; segment người lớn không có box riêng"
+000000001353,missing_box,rejected,"mảnh segment person rất nhỏ (1,2% ảnh) lộ ra sau đầu bé bên phải trên tàu đồ chơi, nằm sát các box person đã có; che khuất tự nhiên, không phải thiếu box"

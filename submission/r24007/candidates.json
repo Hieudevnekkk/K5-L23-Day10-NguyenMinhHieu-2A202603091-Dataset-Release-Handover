@@ -1,0 +1,52 @@
+{
+ "candidates": [
+  {
+   "image": "000000000872",
+   "type": "missing_box",
+   "score": 0.12,
+   "detail": "person segment=12234672 chiếm 12.0% ảnh, không có box"
+  },
+  {
+   "image": "000000001353",
+   "type": "missing_box",
+   "score": 0.012,
+   "detail": "person segment=1452642 chiếm 1.2% ảnh, không có box"
+  },
+  {
+   "image": "000000001818",
+   "type": "missing_box",
+   "score": 0.442,
+   "detail": "zebra segment=8092282 chiếm 44.2% ảnh, không có box"
+  },
+  {
+   "image": "000000012748",
+   "type": "missing_box",
+   "score": 0.185,
+   "detail": "person segment=4079972 chiếm 18.5% ảnh, không có box"
+  },
+  {
+   "image": "000000017178",
+   "type": "instance_merge",
+   "score": 1.0,
+   "detail": "horse segment=2564903 phủ 2 box cùng lớp"
+  },
+  {
+   "image": "000000017379",
+   "type": "class_or_category_swap",
+   "score": 1.0,
+   "detail": "detection='person' panoptic='truck' segment=15253823 bbox_iou=1.00"
+  },
+  {
+   "image": "000000022192",
+   "type": "class_or_category_swap",
+   "score": 1.0,
+   "detail": "detection='cat' panoptic='dog' segment=2172724 bbox_iou=1.00"
+  },
+  {
+   "image": "000000023034",
+   "type": "class_or_category_swap",
+   "score": 1.0,
+   "detail": "detection='orange' panoptic='person' segment=4466219 bbox_iou=1.00"
+  }
+ ]
+}
